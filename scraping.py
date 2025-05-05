@@ -15,12 +15,13 @@ driver = webdriver.Chrome(options=options)
 driver.get(url)  # Run in headless mode (no GUI)
 
 data = []
-for i in range(0, 3):
+for i in range(0, 3): # Adjust the range for more pages
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     container = soup.find_all('article', attrs={'class':'css-1pr2lii'})
 
     for containers in container:
         try:
+            product = containers.find('p', attrs={'class':'css-1mjoy75-unf-heading e1qvo2ff8'}).text
             nama = containers.find('span', attrs={'class':'name'}).text
             review = containers.find('span', attrs={'data-testid':'lblItemUlasan'}).text
             rate_container = containers.find('div', attrs={'data-testid':'icnStarRating'})
@@ -28,7 +29,8 @@ for i in range(0, 3):
             
             data.append(
                 {
-                    'Nama': nama,
+                    'Produk': product,
+                    'Pelanggan': nama,
                     'Ulasan': review,
                     'Rating' : rate
                     
@@ -43,5 +45,5 @@ driver.find_element(By.CSS_SELECTOR, "button[aria-label^='Laman berikutnya']").c
 time.sleep(3)
 
 print(data)
-df = pd.DataFrame(data, columns=['Nama','Ulasan','Rating'])
+df = pd.DataFrame(data, columns=['Produk','Pelanggan','Ulasan','Rating'])
 df.to_csv("Tokopedia.csv", index=False)
